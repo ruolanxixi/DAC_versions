@@ -1,7 +1,6 @@
 subroutine find_precipitation (geometry,params)
 
-! computes orographic precipitation (not fully implemented yet)
-! in this version precipitation is set to 1 (m/yr)
+! computes orographic precipitation
 
 use definitions
 

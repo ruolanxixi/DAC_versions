@@ -3,6 +3,7 @@
 include Makefile.build
 
 OBJECTS = \
+lfpm.o \
 module_definitions.o \
 add_and_remove_nodes_2.o \
 DivideAndCapture.o \
@@ -23,6 +24,7 @@ erode.o \
 initialize_parameters.o \
 uplift_and_advect.o \
 captures_and_divides.o \
+find_orographic_precipitation.o \
 find_precipitation.o \
 find_catchment.o \
 output_geometry.o \
@@ -86,3 +88,6 @@ resclean:
 	-cd RUN5; rm -f *.vtk ; cd -
 	-cd RESTART; rm -f GeoFile* ;cd -
 	-cd ASCII; rm -f * ;cd -
+
+run: DivideAndCapture
+	export OMP_NUM_THREADS=4 && ./DAC

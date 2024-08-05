@@ -29,12 +29,11 @@ yl =  geometry%yl
 zl =  geometry%zl
 
   geometry%nnode=nx*ny ! computes total number of nodes
-  geometry%nnode_max=geometry%nnode*5
+  geometry%nnode_max=geometry%nnode*2
   !geometry%nnmax=20 ! nnmax is the maximum number of neighbour nodes per node; 12 is usually enough
   geometry%ndivide_max = geometry%nnode_max*(geometry%nnmax-1) !max number of divides
   geometry%ndivide=0 ! don't change this
   geometry%ncapture=0 ! don't cahnge this
-  
   
   print*, ' '
   print*, 'Grid parameters: '
@@ -64,7 +63,7 @@ zl =  geometry%zl
   if (params%transient_divide) then
      allocate(geometry%erosion_rate_history(geometry%nnode_max,params%num_bins))
   endif
-  
+
   geometry%nb=0 ! don't change this
   geometry%nt=0
   

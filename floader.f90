@@ -93,7 +93,17 @@ params%num_restart = iread(s)			! where to restart
 params%ascii = lread(s)				! flag to output ASCII data of the run (used for post-processing)
 params%show_vtkfine = lread(s)                  ! flag:  output the full triangulation involving the divides. Large output files.
 
-
+! read precipitation parameters
+params%per = iread(s)
+params%lc = dread(s)
+params%lf = dread(s)
+params%ll = dread(s)
+params%ld = dread(s)
+params%refheight = dread(s)
+params%evap = dread(s)
+params%qin = dread(s)
+params%nx = iread(s)
+params%ny = iread(s)
 
 
 

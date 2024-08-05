@@ -28,7 +28,7 @@ subroutine write_ascii (geometry,params,network)
   open (72,file='ASCII/sediment_flux'//cs,status='unknown')
   open (73,file='ASCII/catchment'//cs,status='unknown')
   open (74,file='ASCII/river_network'//cs,status='unknown')
-
+  open (80,file='ASCII/precipitation'//cs,status='unknown')
   
   do i=1,geometry%nnode
      write(70,'(3f16.3)') geometry%x(i),geometry%y(i),geometry%z(i)
@@ -52,11 +52,16 @@ subroutine write_ascii (geometry,params,network)
      write(74,'(9I10)') i,ii
   enddo
 
+  do i=1,geometry%nnode
+     write(80,'(e12.4)') geometry%precipitation(i)
+  enddo
+
   close (70,err=1231)
   close (71,err=1231)
   close (72,err=1231)
   close (73,err=1231)
   close (74,err=1231)
+  close (80,err=1231)
   return
 1231 STOP 'problem closing file in VTK'
 end

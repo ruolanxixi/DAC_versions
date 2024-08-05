@@ -32,11 +32,11 @@
 /-----------------------------------------------------------------------------
 / 1. GEOMETRY ----------------------------------------------------------------
  
-/xl,yl - spatial extent of domain [m]
-80000.d0
+/xl,yl - spatial extent of domain [m] 
+8.d4
 
 /yl
-80000.d0
+8.d4
 
 
 /mesh and its parameters----------
@@ -95,17 +95,17 @@
  
 /time -----
 /deltat [a] - time step length
-0.05d3
+5.d4
  
 /time  [a] - time at start (should always be 0)
 0.d0  
  
 /tfinal [a] - final time (in years)
 /8.0d7
-0.1d3
+1.d7
  
 /freq  -  frequency, plot every "freq"-th timestep 
-500
+10
  
 
 
@@ -156,11 +156,11 @@
 / 4. FORCING PARAMETERS ------------------------------------------------------
 
 /rainfall_height   -  this is used for constant rainfall parameter [m/a]
-1.d0
+1.d-2
 
 /uplift and advection parameters -----
 /uplift_scalar1  -  uplift rate as constant in interior [m/a]
-6.0d-4
+2.0d-4
 
  
  
@@ -188,7 +188,7 @@
 1
  
 /transient_divide 	- flag to calculate transient elevation of fluvial part of divides 
-0
+1
  
 /num_bins               - how many bins to store erosion values
 12
@@ -208,16 +208,46 @@
 0
  
 /vtk_fine               - whether to output the full triangulation involving the divides. Large output files.
-0
+1
  
 
+/-----------------------------------------------------------------------------
+/ 6. PRECIPITATION PARAMETERS ------------------------------------------------
+/ per          - 0 for closed sideward boundaries, 1 for periodic boundaries
+1
 
+/ lc           - length scale of condensation [m]; between 10,000 to 100,000 m
+2.d2
+
+/ lf           - length scale of fallout [m]; between 10,000 to 100,000 m
+2.d2
+
+/ ll,          - length scale of long-range transport [m]; between 120,000 to 1,200,000 m 
+3.d3
+
+/ ld,          - length scale of dispersion [m]
+1.d2
+
+/ refheight    - reference elevation [m] 
+3.d3
+
+/ evap         - evaporation fraction at sea level
+0.5
+
+/ qin          - influx at the uppermost row (i = 0)
+1.d-4
+
+/ nx           - numbers of rows for interpolation
+1000
+
+/ ny           - numbers of columns for interpolation
+1000
 
 
 
 /---------------------------------------------------------------------------
 / --------------------------------------------------------------------------
-/ 6. SPECIAL PROVISIONS - vary one input parameter as function of either x,y,z
+/ 7. SPECIAL PROVISIONS - vary one input parameter as function of either x,y,z
 / see bottom for syntax
 
 /f_varies_with_xyz        -  1 yes, 0 no: stop reading here

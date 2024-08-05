@@ -85,6 +85,12 @@ subroutine VTK (geometry,delaunay,params,network,stack)
      write(30,'(e12.4)') geometry%erosion_rate(i)
   enddo
 
+  write(30,'(a)')'SCALARS precipitation float 1'
+  write (30,'(a)')'LOOKUP_TABLE default'
+  do i=1,geometry%nnode
+     write(30,'(e12.4)') geometry%precipitation(i)
+  enddo
+
   write(30,'(a)')'SCALARS sediment_flux float 1'
   write (30,'(a)')'LOOKUP_TABLE default'
   do i=1,geometry%nnode

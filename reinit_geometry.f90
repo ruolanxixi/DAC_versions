@@ -1,6 +1,6 @@
 subroutine reinit_geometry (geometry,params,network,delaunay)
 
-  ! Subroutine to initialize the gemetry of the problem
+  ! Subroutine to initialize the geometry of the problem
   ! such as node locations, velocities, erosional properties, etc
 
   use definitions
@@ -88,7 +88,7 @@ subroutine reinit_geometry (geometry,params,network,delaunay)
   if (params%transient_divide) then
      allocate(geometry%erosion_rate_history(geometry%nnode_max,params%num_bins))
   endif
-  
+
   if (params%transient_divide) then
     do i = 1,geometry%nnode
        do j = 1,params%num_bins

@@ -9,7 +9,7 @@ LIBS = -lm -lgfortran -LNN -lnn
 #OPTIONS =  -O0 -g -ggdb
 ##
 #build version release
-FLAGS =  -c -fbounds-check -O2  -ffree-line-length-400 
-CFLAGS = -c -O2 
+FLAGS =  -c -fbounds-check -O2  -ffree-line-length-400 -mcmodel=small -fopenmp 
+CFLAGS = -c -O2 -mcmodel=small -fopenmp
 INCLUDE =
-OPTIONS =  -O2
+OPTIONS =  -O2 -mcmodel=small -fopenmp

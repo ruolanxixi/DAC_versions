@@ -17,7 +17,7 @@ program DivideAndCapture
   type (stck) stack
   type (timr) timer
   type (parm) params
-  type (lands)  landscape	
+  type (lands) landscape
   character*11  title
   integer old_ncapture, i, j, k, m, l, n
   double precision li,lj
@@ -80,9 +80,7 @@ program DivideAndCapture
   endif
 
   do while (params%time.lt.params%tfinal) ! start of time loop
-     
-    
-    
+
      params%deltat=min(params%deltat,params%tfinal-params%time)
      params%time=params%time+params%deltat
      params%istep=params%istep+1
@@ -100,21 +98,24 @@ program DivideAndCapture
 
      if (params%add_nodes) then 
         call add_remove_nodes(geometry,network,params,delaunay)       
-        call calculate_delaunay (geometry,delaunay)     !redo delaunay triangulation      
+        call calculate_delaunay (geometry,delaunay)     !redo delaunay triangulation     
         call find_network (geometry,delaunay,network,1) ! find neighbour list only         
      endif
      if (params%transient_divide) call update_erosion_rate_history(geometry,params)
 
-     call captures_and_divides (geometry,network,params,delaunay) ! find potential captures and adjusts network accordingly  
+     call captures_and_divides (geometry,network,params,delaunay) ! find potential captures and adjusts network accordingly
+
+     call find_orographic_precipitation (geometry,params) 
     
      call find_polygon_surface (geometry,network,params,delaunay) ! find surface area attached to each point
      if (params%add_nodes) deallocate(stack%order)
+
      call find_order (geometry,network,stack,delaunay,params) ! find stack order to perform the erosion and cascade algorithms
      call find_catchment (geometry,network,stack,delaunay,params) ! find catchments
      call find_discharge (geometry,network,stack) ! compute discharge (improved cascade algorithm)
      call erode (geometry,network,stack,delaunay,params) ! erode
      
-     if ((params%istep/params%freq)*params%freq.eq.params%istep) then	
+     if ((params%istep/params%freq)*params%freq.eq.params%istep) then
         call find_strahler(geometry,network,stack) 
          if (params%show_vtkfine) call finetri (geometry, params,delaunay,network, landscape)
         call output_z_tau(params,geometry,network,stack)

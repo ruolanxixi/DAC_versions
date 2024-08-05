@@ -20,6 +20,8 @@ MODULE definitions
       double precision,dimension(:,:),pointer:: f_timebound       ! limit validity of condition block in time
       double precision,dimension(:,:,:),pointer::poly       ! polynomial coefficients
       integer,dimension(:,:),pointer:: pn   ! degree/elements per line
+      integer per, nx, ny
+      double precision lc,lf,ll,ld,refheight,evap,qin
    end type parm
 
    type geom
@@ -69,10 +71,10 @@ MODULE definitions
    end type timr
 
    TYPE lands
-	sequence
-	integer nfinetri, nfinenode
-	double precision, dimension(:),allocatable::xx,yy,zz,edot
-	integer, dimension(:,:), pointer::fineicon
+     sequence
+     integer nfinetri, nfinenode
+     double precision, dimension(:),allocatable::xx,yy,zz,edot
+     integer, dimension(:,:), pointer::fineicon
    END TYPE lands
 
 end MODULE definitions
