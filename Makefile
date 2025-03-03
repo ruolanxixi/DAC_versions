@@ -24,6 +24,9 @@ erode.o \
 initialize_parameters.o \
 uplift_and_advect.o \
 captures_and_divides.o \
+kd_tree.o \
+idw_interp_esrg.o \
+interpolation.o \
 find_orographic_precipitation.o \
 find_precipitation.o \
 find_catchment.o \

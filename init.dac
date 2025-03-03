@@ -1,6 +1,6 @@
 /INIT.DAC, the input file for the DAC code
 /
-/ Some general comments: 
+/ Some general comments:
 / commented lines can be begun with "/", "!", or " "(white space)
 / (so that C and F style comments valid),
 / use space for beauty instead of empty lines (? although it seem to work, better not ...)
@@ -13,9 +13,9 @@
 / logical switches: "0" = disable;  ">,<0" (anything else) = enable
 /
 / Note that no integrity checking is included (0 / negative values / senseless values cause no warning) - get it right!
- 
 
- 
+
+
 /OVERVIEW over this file:
 /   1. Geometry of the model
 /       - Size and resolution
@@ -27,26 +27,26 @@
 /   5. Feature control: enabling/disabling processes
 /  (6. User-defined fields)
 
- 
- 
+
+
 /-----------------------------------------------------------------------------
 / 1. GEOMETRY ----------------------------------------------------------------
- 
-/xl,yl - spatial extent of domain [m] 
+
+/xl,yl - spatial extent of domain [m]
 8.d4
 
 /yl
-8.d4
+5.d4
 
 
 /mesh and its parameters----------
 
 /nx,ny  - node numbers for initial grid spacing
 /nx:
-51
+80
 
 /ny:
-51
+50
 
 /zl - maximum height of initial landscape [m]
 1.d0
@@ -56,7 +56,7 @@
 
 /xc  -  hillslope length (in the vicinity of divides) [m]  CRUCIAL
 700.d0
-  
+
 /next three concern addition and removal of nodes
 /lmax - maximum distance between two points before adding a node
 2.4d3
@@ -72,7 +72,7 @@
 
 
 
- 
+
 /boundaries ------------------------
 / 0- no motion, constant elevation=0; 1 - no motion, constant elevation = initial elevation; 2 - implicit uplift, set as average of neighbours,  4 - normal uplift,  8 - motion in x, 16 - motion in y
 / combine as follows by addition: no uplift and x-motion 8 or 9,  uplift and x-motion=12, uplift and y-motion=20, motion in all 3 directions = 28
@@ -89,24 +89,23 @@
 
 
 
- 
+
 /---------------------------------------------------------------------------
 / 2. TIME STEPPING ---------------------------------------------------------
- 
+
 /time -----
 /deltat [a] - time step length
-5.d4
- 
+2.d3
+
 /time  [a] - time at start (should always be 0)
-0.d0  
- 
+0.d0
+
 /tfinal [a] - final time (in years)
-/8.0d7
-1.d7
- 
-/freq  -  frequency, plot every "freq"-th timestep 
-10
- 
+4.0d6
+
+/freq  -  frequency, plot every "freq"-th timestep
+25
+
 
 
 
@@ -115,23 +114,23 @@
 / 3. CHANNEL AND HILLSLOPE PARAMETERS ----------------------------------------
 
 /k_scalar1   -  erodibility constant
-1.d-6
+2.5d-6
 
 / streams
 /Stream power, Hack's law -----
-/n  -  slope exponent in fluvial incision law	INTEGER OR DOUBLE? here integer as declared in "parm" type 
+/n  -  slope exponent in fluvial incision law	INTEGER OR DOUBLE? here integer as declared in "parm" type
 1.d0
- 
+
 /m  -  area (or discharge) exponent in fluvial incision law
 0.5d0
- 
+
 /h  -  Hack's exponent
 2.d0
 
 /ka  -  Hack's constant (no unit)
-1.6666666666666667d0 
- 
- 
+1.6666666666666667d0
+
+
 /Hill slope, analytical portion parameters -----
 /note that xc  -  hillslope length (in the vicinity of divides) has already been set
 
@@ -160,89 +159,82 @@
 
 /uplift and advection parameters -----
 /uplift_scalar1  -  uplift rate as constant in interior [m/a]
-2.0d-4
+1.d-3
 
- 
- 
+
+
 /---------------------------------------------------------------------------
 / 5. FEATURE CONTROL -------------------------------------------------------
 /for flags: 0=.FALSE.  1=.TRUE.
- 
+
 / what does it do -----------
 /add_nodes   		- flag to allow adding nodes
 1
 
 /move_points.     	- flag to allow the horizontal motion of nodes
 1
- 
+
 /capture		- flag to allow for captures
 1
- 
+
 /divide               	- flag to allow for divide calculations
 1
- 
+
 /small_divide 		- flag to allow for small divide calculations (case where divide is very close to zj)
 1
- 
+
 /diffusion 		- flag to allow diffusive hilltops
 1
- 
-/transient_divide 	- flag to calculate transient elevation of fluvial part of divides 
+
+/transient_divide 	- flag to calculate transient elevation of fluvial part of divides
 1
- 
+
 /num_bins               - how many bins to store erosion values
 12
- 
+
 /sample_per_bin         - how many samples to store in bin
 1000
- 
+
 
 /input/output ----------------
 /read_restart 		- flag to read GeoFile to restart run from the end of previous run
 0
- 
+
 /num_restart            - which GeoFile to read
 0
- 
+
 /ascii                  - flag to output ASCII data of the run (used for post-processing)
 0
- 
+
 /vtk_fine               - whether to output the full triangulation involving the divides. Large output files.
 1
- 
+
 
 /-----------------------------------------------------------------------------
 / 6. PRECIPITATION PARAMETERS ------------------------------------------------
 / per          - 0 for closed sideward boundaries, 1 for periodic boundaries
 1
 
-/ lc           - length scale of condensation [m]; between 10,000 to 100,000 m
-2.d2
+/ lc           - length scale of condensation [km]; between 10,000 to 100,000 m
+25.
 
-/ lf           - length scale of fallout [m]; between 10,000 to 100,000 m
-2.d2
+/ lf           - length scale of fallout [km]; between 10,000 to 100,000 m
+25.
 
-/ ll,          - length scale of long-range transport [m]; between 120,000 to 1,200,000 m 
-3.d3
+/ ll           - length scale of long-range transport [km]; between 120,000 to 1,200,000 m
+600.
 
-/ ld,          - length scale of dispersion [m]
-1.d2
+/ ld           - length scale of dispersion [km]
+25.
 
-/ refheight    - reference elevation [m] 
-3.d3
+/ refheight    - reference elevation [m]
+2.d3
 
 / evap         - evaporation fraction at sea level
-0.5
+0.8
 
-/ qin          - influx at the uppermost row (i = 0)
-1.d-4
-
-/ nx           - numbers of rows for interpolation
-1000
-
-/ ny           - numbers of columns for interpolation
-1000
-
+/ qin          - influx at the first row (i = 0)
+5.d2
 
 
 /---------------------------------------------------------------------------
@@ -254,7 +246,7 @@
 0
 
 /f_num_sets             - how many times something is set as function of ... arbitrary combinations possible
-4
+1
 
 
 
@@ -263,15 +255,17 @@
 /f_depends_on  - choice:  x,y,z
 y
 /f_variable_determined  - choice:  u,v,w, p,k
-u
+w
 /superposition  0 - overwrite, 1 - add, 2 - multiply
 0
 /time bounds [a], if any -  write 0, 0 for eternity; e.g. 0, 1.d6 makes condition only valid for first 1 Ma
-0, 1.25e6
+0, 0
 /number of segments to follow - not determined automatically
-1
+2
 /polynomial lines, matching number above
-0,160000,0,              1e-4, 1e-7
+0,10000,0,  1.d-6
+10000,50000,10000, 1.5d-3         
+
 //---------------- block 1
 
 

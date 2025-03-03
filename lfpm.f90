@@ -90,7 +90,6 @@ contains
 
     beta = (1.0 - this%lc / this%ll) * (this%ll / this%lf - 1.0)
 
-    !$OMP PARALLEL DO PRIVATE(j, f)
     do j = 1, this%n
       f = this%lf / (this%ll - this%lf) * exp(this%u(1, j)%h / this%refheight)
       this%rhs(j)%u1 = this%qin / (1.0 + f)
@@ -98,11 +97,9 @@ contains
       this%u(1, j)%qv = this%rhs(j)%u1
       this%u(1, j)%qc = this%rhs(j)%u2
     end do
-    !$OMP END PARALLEL DO
 
     ! Loop over the rows of the grid. Each rows uses the fluxes of the previous row.
     do i = 2, this%m
-      !$OMP PARALLEL DO PRIVATE(j, f) SHARED(this, beta)
       do j = 1, this%n
         f = exp(-this%u(i, j)%h / this%refheight)
         this%psi(j) = 1.0 - f * this%evap
@@ -119,9 +116,7 @@ contains
           this%diag(j)%a22 = this%ld + 1.0 + f + 1.0 / this%lf
         end if
       end do
-      !$OMP END PARALLEL DO
 
-      !$OMP PARALLEL DO PRIVATE(j) SHARED(this)
       do j = 1, this%n - 1
         this%lower(j)%a11 = -this%ld
         this%lower(j)%a12 = 0.0
@@ -132,9 +127,7 @@ contains
         this%upper(j)%a21 = 0.0
         this%upper(j)%a22 = -this%ld
       end do
-      !$OMP END PARALLEL DO
       if (this%per == 1) then
-        !$OMP PARALLEL
         this%right(1)%a11 = -this%ld
         this%right(1)%a12 = 0.0
         this%right(1)%a21 = 0.0
@@ -143,7 +136,6 @@ contains
         this%bottom(1)%a12 = 0.0
         this%bottom(1)%a21 = 0.0
         this%bottom(1)%a22 = -this%ld
-        !$OMP DO
         do j = 2, this%n - 2
           this%right(j)%a11 = 0.0
           this%right(j)%a12 = 0.0
@@ -154,8 +146,6 @@ contains
           this%bottom(j)%a21 = 0.0
           this%bottom(j)%a22 = 0.0
         end do
-        !$OMP END DO
-        !$OMP END PARALLEL
       end if
 
       do j = 1, this%n - 1
@@ -199,76 +189,76 @@ contains
 end module lfpm
 
 
-module interpolation
-  implicit none
-  contains
-  subroutine bilinear_interpolation(x, y, z, n, xi, yi, zi)
-    implicit none
-    integer, intent(in) :: n
-    double precision, dimension(n), intent(in) :: x, y, z
-    double precision, intent(in) :: xi, yi
-    double precision, intent(out) :: zi
-    double precision :: w_sum, w, dx, dy
-    integer :: k
-
-    w_sum = 0.0
-    zi = 0.0
-    !$omp parallel do private(k, dx, dy, w) reduction(+:zi, w_sum)
-    do k = 1, n
-        dx = xi - x(k)
-        dy = yi - y(k)
-        w = 1.0 / (dx * dx + dy * dy + 1.0e-10)  ! Avoid division by zero
-        zi = zi + w * z(k)
-        w_sum = w_sum + w
-    end do
-    !$omp end parallel do
-    if (w_sum /= 0.0) zi = zi / w_sum
-  end subroutine bilinear_interpolation
-
-
-  subroutine reverse_interpolation(x, y, z, n, grid, nx, ny, x_min, dx, y_min, dy)
-    implicit none
-    integer, intent(in) :: n, nx, ny
-    double precision, dimension(n), intent(in) :: x, y
-    double precision, dimension(nx, ny), intent(in) :: grid
-    double precision, intent(out) :: z(n)
-    double precision, intent(in) :: x_min, y_min, dx, dy
-    integer :: i, j, ix, iy
-    double precision :: xi, yi, x1, x2, y1, y2, f11, f12, f21, f22, w11, w12, w21, w22
-    !$omp parallel do private(i, xi, yi, ix, iy, x1, x2, y1, y2, f11, f12, f21, f22, w11, w12, w21, w22)
-    do i = 1, n
-      xi = x(i)
-      yi = y(i)
-      
-      ! Determine the grid cell (ix, iy) that contains (xi, yi)
-      ix = int((xi - x_min) / dx) + 1
-      iy = int((yi - y_min) / dy) + 1
-
-      ! Ensure indices are within bounds
-      if (ix < 1 .or. ix >= nx .or. iy < 1 .or. iy >= ny) then
-        z(i) = 0.0  ! Default value to avoid NaN
-      else
-        x1 = x_min + (ix-1) * dx
-        x2 = x1 + dx
-        y1 = y_min + (iy-1) * dy
-        y2 = y1 + dy
-          
-        f11 = grid(ix, iy)
-        f12 = grid(ix, iy+1)
-        f21 = grid(ix+1, iy)
-        f22 = grid(ix+1, iy+1)
-        
-        w11 = (x2 - xi) * (y2 - yi)
-        w12 = (x2 - xi) * (yi - y1)
-        w21 = (xi - x1) * (y2 - yi)
-        w22 = (xi - x1) * (yi - y1)
-        
-        z(i) = (w11 * f11 + w12 * f12 + w21 * f21 + w22 * f22) / (dx * dy)
-      end if
-    end do
-    !$omp end parallel do
-  end subroutine reverse_interpolation
-end module interpolation
+!module interpolation
+!  implicit none
+!  contains
+!  subroutine bilinear_interpolation(x, y, z, n, xi, yi, zi)
+!    implicit none
+!    integer, intent(in) :: n
+!    double precision, dimension(n), intent(in) :: x, y, z
+!    double precision, intent(in) :: xi, yi
+!    double precision, intent(out) :: zi
+!    double precision :: w_sum, w, dx, dy
+!    integer :: k
+!
+!    w_sum = 0.0
+!    zi = 0.0
+!    !$omp parallel do private(k, dx, dy, w) reduction(+:zi, w_sum)
+!    do k = 1, n
+!        dx = xi - x(k)
+!        dy = yi - y(k)
+!        w = 1.0 / (dx * dx + dy * dy + 1.0e-10)  ! Avoid division by zero
+!        zi = zi + w * z(k)
+!        w_sum = w_sum + w
+!    end do
+!    !$omp end parallel do
+!    if (w_sum /= 0.0) zi = zi / w_sum
+!  end subroutine bilinear_interpolation
+!
+!
+!  subroutine reverse_interpolation(x, y, z, n, grid, nx, ny, x_min, dx, y_min, dy)
+!    implicit none
+!    integer, intent(in) :: n, nx, ny
+!    double precision, dimension(n), intent(in) :: x, y
+!    double precision, dimension(nx, ny), intent(in) :: grid
+!    double precision, intent(out) :: z(n)
+!    double precision, intent(in) :: x_min, y_min, dx, dy
+!    integer :: i, j, ix, iy
+!    double precision :: xi, yi, x1, x2, y1, y2, f11, f12, f21, f22, w11, w12, w21, w22
+!    !$omp parallel do private(i, xi, yi, ix, iy, x1, x2, y1, y2, f11, f12, f21, f22, w11, w12, w21, w22)
+!    do i = 1, n
+!      xi = x(i)
+!      yi = y(i)
+!
+!      ! Determine the grid cell (ix, iy) that contains (xi, yi)
+!      ix = int((xi - x_min) / dx) + 1
+!      iy = int((yi - y_min) / dy) + 1
+!
+!      ! Ensure indices are within bounds
+!      if (ix < 1 .or. ix >= nx .or. iy < 1 .or. iy >= ny) then
+!        z(i) = 0.0  ! Default value to avoid NaN
+!      else
+!        x1 = x_min + (ix-1) * dx
+!        x2 = x1 + dx
+!        y1 = y_min + (iy-1) * dy
+!        y2 = y1 + dy
+!
+!        f11 = grid(ix, iy)
+!        f12 = grid(ix, iy+1)
+!        f21 = grid(ix+1, iy)
+!        f22 = grid(ix+1, iy+1)
+!
+!        w11 = (x2 - xi) * (y2 - yi)
+!        w12 = (x2 - xi) * (yi - y1)
+!        w21 = (xi - x1) * (y2 - yi)
+!        w22 = (xi - x1) * (yi - y1)
+!
+!        z(i) = (w11 * f11 + w12 * f12 + w21 * f21 + w22 * f22) / (dx * dy)
+!      end if
+!    end do
+!    !$omp end parallel do
+!  end subroutine reverse_interpolation
+!end module interpolation
 
 module nan_handling
   implicit none
@@ -336,7 +326,7 @@ contains
     implicit none
     integer, intent(in) :: n, nx, ny
     double precision, dimension(n), intent(in) :: x, y, z
-    double precision, dimension(nx, ny), intent(in) :: grid
+    double precision, dimension(ny, nx), intent(in) :: grid
     double precision, intent(in) :: x_min, y_min, dx, dy
     integer :: i, j
 
@@ -349,9 +339,9 @@ contains
 
     ! Write gridded data to a file
     open(unit=11, file='gridded_data.dat', status='replace')
-    do i = 1, nx
-      do j = 1, ny
-        write(11, *) x_min + (i-1) * dx, y_min + (j-1) * dy, grid(i, j)
+    do j = 1, ny
+      do i = 1, nx
+        write(11, *) x_min + (i-1) * dx, y_min + (j-1) * dy, grid(j, i)
       end do
     end do
     close(11)

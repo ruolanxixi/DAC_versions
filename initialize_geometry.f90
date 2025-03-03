@@ -133,7 +133,7 @@ zl =  geometry%zl
 
    ! housekeeping - initialize all arrayse
    geometry%precipitation=params%rainfall_height
-    geometry%u=0
+    geometry%u=0 !-1.0d-4
     geometry%v=0
     if(params%f_varies_with_xyz .eqv. .FALSE.)geometry%w=params%uplift_scalar1
    geometry%chi=0

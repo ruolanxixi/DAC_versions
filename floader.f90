@@ -24,23 +24,23 @@ implicit none
   character*150 ca
 
 
-  
+
   integer dummy_int
   double precision dummy_double
-  
+
 
 s=0			! tracks individual read errors (i.e. wrong data type)
-  
-  
-  ! CRUCIAL  -  success of opening decides which section of code is executed	
+
+
+  ! CRUCIAL  -  success of opening decides which section of code is executed
   open (unit=10, file='init.dac', status='old', iostat=sf, err=701)
-  
-  
+
+
     ! do all the loading, sequentially stored in init.dac
 
 
 
- 
+
 geometry%xl=dread(s)
 geometry%yl=dread(s)
 geometry%nx=iread(s)
@@ -56,11 +56,11 @@ do ia=1,4
   geometry%boundary(ia)=iread(s)
 enddo
 
- 	  
+
 params%deltat=dread(s)                        	! time step length (in years)
-params%time=dread(s)                           	! time at start (should always be 0)                  
+params%time=dread(s)                           	! time at start (should always be 0)
 params%tfinal=dread(s)                        	! final time (in years)
-params%freq=iread(s)                     	! frequency of plots in number of time steps 
+params%freq=iread(s)                     	! frequency of plots in number of time steps
 params%istep=0                                  ! time step counter (should always be set to 0)
 params%k_scalar1=dread(s)                      	! erodibility constant
 params%n=dread(s)                              	! slope exponent in fluvial incision law
@@ -72,7 +72,7 @@ params%tanthetac=dread(s)                   	! tangent of hillslope slope
 params%diffusivity=dread(s)                    	! diffusivity for hilltops
 params%diffusivity=params%diffusivity*2.d0     	! double diffusivity as it always appears with a 2*
 params%min_erosion_rate=dread(s)               	! minimum allowable erosion rate for diffusion channel head
-params%min_tan_head_slope = dread(s)         	! minimum slope of channel head (used as a threshold to diffusion) 
+params%min_tan_head_slope = dread(s)         	! minimum slope of channel head (used as a threshold to diffusion)
 params%rainfall_height=dread(s)              	! this is used for constant rainfall parameter
 params%uplift_scalar1=dread(s)                 	! uplift rate as constant in interior
 params%uplift_scalar2=params%uplift_scalar1     ! uplift rate on boundary (used only for channel head calc)
@@ -102,8 +102,6 @@ params%ld = dread(s)
 params%refheight = dread(s)
 params%evap = dread(s)
 params%qin = dread(s)
-params%nx = iread(s)
-params%ny = iread(s)
 
 
 
@@ -232,7 +230,7 @@ return
 		print*,'awaiting acknowledgement - hit return'
 		read(*,*)
 	end if
-	  
+
 
 end subroutine floader
 
@@ -261,25 +259,25 @@ end subroutine floader
 
 !----------------------------------------------------------
 double precision function dread(rs)
-	
+
 implicit none
 
 	character*150 line
 	double precision da
 	integer return_status, rs, ffread
-	
+
 	return_status=ffread(line)
-	
+
 	read(unit=line,fmt=913,err=713) da
 913	format(D150.140)
-	
+
 	dread=da
 
 	return
 
 713	print*,'FAILED to read double, got:   ',line
 	rs=1
-	
+
 end function dread
 
 
@@ -287,25 +285,25 @@ end function dread
 
 !----------------------------------------------------------
 real function rread(rs)
-	
+
 implicit none
 
 	character*150 line
 	real ra
 	integer return_status, rs, ffread
-	
+
 	return_status=ffread(line)
-	
+
 	read(unit=line,fmt=914,err=714) ra
 914	format(E150.140)
-	
+
 	rread=ra
 
 	return
-	
+
 714	print*,'FAILED to read real, got:   ',line
 	rs=1
-	
+
 end function rread
 
 
@@ -313,32 +311,32 @@ end function rread
 
 !----------------------------------------------------------
 integer function iread(rs)
-	
+
 implicit none
 
 	character*150 line
 	integer ia
 	integer return_status, rs, ffread
-	
+
 	return_status=ffread(line)
-	
+
 	!handle possible error
 	if(return_status.ne.0) then
 		rs=1
 		return
 	end if
-	
-	
+
+
 	read(unit=line,fmt=915,err=715) ia
 915	format(I150.140)
-	
+
 	iread=ia
 
 	return
-	
+
 715	print*, 'FAILED to read integer, got:   ',line
 	rs=1
-	
+
 end function iread
 
 
@@ -346,25 +344,25 @@ end function iread
 
 !----------------------------------------------------------
 character*150 function cread(rs)
-	
+
 implicit none
 
 	character*150 line
 	character*150 cline
 	integer return_status, rs, ffread, iok
-	
+
 	return_status=ffread(line)
-	
+
 	read(unit=line,fmt=916,err=716,iostat=iok) cline
 916	format(A150)
-	
+
 	cread=cline
 
 	return
-	
+
 716	print*, 'FAILED to read string, got:   ',line
 	rs=1
-	
+
 end function cread
 
 
@@ -373,26 +371,26 @@ end function cread
 
 !----------------------------------------------------------
 logical function lread(rs)
-	
+
 implicit none
 
 	character*150 line
 	integer ia
 	logical la
 	integer return_status, rs, ffread
-	
+
 	return_status=ffread(line)
-	
-	
-	
-	
+
+
+
+
 	! VERSION 1 - read logical in FORTRAN language (too awkward for DAC input)
 	!read(unit=line,fmt=917,err=717) la
-!917	format(L10)	
+!917	format(L10)
 	!lread=la
-	
-		
-		
+
+
+
 	! VERSION 2 - read logical as 0;1
 	read(unit=line,fmt=917,err=717) ia
 917	format(I30)
@@ -401,13 +399,13 @@ implicit none
 	if(ia.eq.-1)la=.TRUE.
 	lread=la
 
-	
-	
+
+
 	return
-	
+
 717	print*,'FAILED to read logical, got:   ',line
 	rs=1
-	
+
 end function lread
 
 
@@ -416,7 +414,7 @@ end function lread
 
 !----------------------------------------------------------
 ! master function, actual read from file
-	
+
 integer function ffread(line)
 
 implicit none
@@ -426,27 +424,27 @@ implicit none
 	character firstc
 	integer i
 	integer state
-		
+
 	state=0
-	
+
 	do while(state.eq.0)
 		read (unit=10, fmt=911,err=711) fline
 911		format(A150)
 		read(fline,912)firstc
 912		format(A1)
-		
+
 		if (firstc.eq.'/' .or. firstc.eq.' ') then
 			!print*, 'encountered a comment line'
 		else
 			state=1
-			line = fline	
+			line = fline
 		endif
 	end do
-	
+
 	ffread=0
-	
+
 	!print*, 'done ff'
-	
+
 	return
 
 711	ffread=1
@@ -454,5 +452,5 @@ implicit none
 
 
 end function ffread
-	
-! End of modified section ------------------	
+
+! End of modified section ------------------
